@@ -21,7 +21,8 @@ npm install
 ###### Edit the settings
 
 ```
-subl index.js
+cp config.js.example config.js
+subl config.js
 ```
 
 ###### Run the script
