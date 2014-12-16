@@ -2,6 +2,7 @@ require('datejs');
 var config    = require('./config');
 var prompt    = require('prompt');
 var Nightmare = require('nightmare');
+var colors = require('colors');
 
 var schema = {
 	properties: {
@@ -50,6 +51,6 @@ prompt.get(schema, function (err, result) {
 		.run(function (err, nightmare) {
 			if (err) throw err;
 
-			console.log('Done adding hours for ' + date);
+			console.log(('Done adding hours for ' + date).green);
 		});
 });

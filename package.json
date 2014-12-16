@@ -13,6 +13,7 @@
     "url": "https://bitbucket.org/thriveline/paycheckrecords.git"
   },
   "dependencies": {
+    "colors": "^1.0.3",
     "datejs": "^1.0.0-rc1",
     "nightmare": "^1.1.0",
     "prompt": "^0.2.14"
