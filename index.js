@@ -2,7 +2,7 @@ require('datejs');
 var config    = require('./config');
 var prompt    = require('prompt');
 var Nightmare = require('nightmare');
-var colors = require('colors');
+var colors    = require('colors');
 
 var schema = {
 	properties: {
@@ -28,7 +28,7 @@ prompt.get(schema, function (err, result) {
 	var date = Date.parse(result.date),
 	    date = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear(),
 	    shift1Start = result.shift1.split('-')[0].trim(),
-	    shift1End   = result.shift1.split('-')[1].trim()
+	    shift1End   = result.shift1.split('-')[1].trim(),
 	    shift2Start = result.shift2.split('-')[0].trim(),
 	    shift2End   = result.shift2.split('-')[1].trim()
 
