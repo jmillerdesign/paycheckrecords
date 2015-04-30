@@ -4,6 +4,23 @@ var prompt    = require('prompt');
 var Nightmare = require('nightmare');
 var colors    = require('colors');
 
+// Monkey patch for https://github.com/segmentio/nightmare/issues/126
+(function () {
+	var sockjs = require('nightmare/node_modules/phantom/node_modules/shoe/node_modules/sockjs');
+	if (!sockjs._createServerOld) {
+		sockjs._createServerOld = sockjs.createServer;
+		sockjs.createServer = function (options) {
+			if (!options) {
+				options = {};
+			}
+			if (!('heartbeat_delay' in options)) {
+				options.heartbeat_delay = 200;
+			}
+			return sockjs._createServerOld(options);
+		};
+	}
+})();
+
 var schema = {
 	properties: {
 		date: {
@@ -12,11 +29,11 @@ var schema = {
 		},
 		shift1: {
 			description: 'Before lunch',
-			default: '8a-11a'
+			default: '8a-12p'
 		},
 		shift2: {
 			description: 'After lunch',
-			default: '12p-5p'
+			default: '1p-5p'
 		}
 	}
 };
@@ -30,7 +47,16 @@ prompt.get(schema, function (err, result) {
 	    shift1Start = result.shift1.split('-')[0].trim(),
 	    shift1End   = result.shift1.split('-')[1].trim(),
 	    shift2Start = result.shift2.split('-')[0].trim(),
-	    shift2End   = result.shift2.split('-')[1].trim()
+	    shift2End   = result.shift2.split('-')[1].trim();
+
+	// If you don't enter a time, then skip the entry.
+	// This way, you can enter "-" or something to skip
+	if (!parseInt(shift1Start[0], 10)) {
+		shift1Start = shift1End = '';
+	}
+	if (!parseInt(shift2Start[0], 10)) {
+		shift2Start = shift2End = '';
+	}
 
 	new Nightmare()
 		.goto('https://www.paycheckrecords.com/login.jsp')
