@@ -4,6 +4,23 @@ var prompt    = require('prompt');
 var Nightmare = require('nightmare');
 var colors    = require('colors');
 
+// Monkey patch for https://github.com/segmentio/nightmare/issues/126
+(function () {
+	var sockjs = require('nightmare/node_modules/phantom/node_modules/shoe/node_modules/sockjs');
+	if (!sockjs._createServerOld) {
+		sockjs._createServerOld = sockjs.createServer;
+		sockjs.createServer = function (options) {
+			if (!options) {
+				options = {};
+			}
+			if (!('heartbeat_delay' in options)) {
+				options.heartbeat_delay = 200;
+			}
+			return sockjs._createServerOld(options);
+		};
+	}
+})();
+
 var schema = {
 	properties: {
 		date: {
