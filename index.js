@@ -29,11 +29,11 @@ var schema = {
 		},
 		shift1: {
 			description: 'Before lunch',
-			default: '8a-11a'
+			default: '8a-12p'
 		},
 		shift2: {
 			description: 'After lunch',
-			default: '12p-5p'
+			default: '1p-5p'
 		}
 	}
 };
