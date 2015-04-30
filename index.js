@@ -49,6 +49,15 @@ prompt.get(schema, function (err, result) {
 	    shift2Start = result.shift2.split('-')[0].trim(),
 	    shift2End   = result.shift2.split('-')[1].trim();
 
+	// If you don't enter a time, then skip the entry.
+	// This way, you can enter "-" or something to skip
+	if (!parseInt(shift1Start[0], 10)) {
+		shift1Start = shift1End = '';
+	}
+	if (!parseInt(shift2Start[0], 10)) {
+		shift2Start = shift2End = '';
+	}
+
 	new Nightmare()
 		.goto('https://www.paycheckrecords.com/login.jsp')
 		.type('#userStrId', config.username)
