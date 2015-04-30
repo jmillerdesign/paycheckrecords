@@ -47,7 +47,7 @@ prompt.get(schema, function (err, result) {
 	    shift1Start = result.shift1.split('-')[0].trim(),
 	    shift1End   = result.shift1.split('-')[1].trim(),
 	    shift2Start = result.shift2.split('-')[0].trim(),
-	    shift2End   = result.shift2.split('-')[1].trim()
+	    shift2End   = result.shift2.split('-')[1].trim();
 
 	new Nightmare()
 		.goto('https://www.paycheckrecords.com/login.jsp')
