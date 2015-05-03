@@ -3,6 +3,9 @@ var config    = require('./config');
 var prompt    = require('prompt');
 var Nightmare = require('nightmare');
 var colors    = require('colors');
+var notifier  = require('node-notifier');
+var CronJob   = require('cron').CronJob;
+var Redis     = require('redis').createClient(config.redis.port, config.redis.host);
 
 // Monkey patch for https://github.com/segmentio/nightmare/issues/126
 (function () {
@@ -21,33 +24,13 @@ var colors    = require('colors');
 	}
 })();
 
-var schema = {
-	properties: {
-		date: {
-			description: 'Date',
-			default: 'today'
-		},
-		shift1: {
-			description: 'Before lunch',
-			default: '8a-12p'
-		},
-		shift2: {
-			description: 'After lunch',
-			default: '1p-5p'
-		}
-	}
-};
-
-prompt.start();
-prompt.get(schema, function (err, result) {
-	if (err) throw err;
-
-	var date = Date.parse(result.date),
+function enterHours (data) {
+	var date = Date.parse(data.date),
 	    date = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear(),
-	    shift1Start = result.shift1.split('-')[0].trim(),
-	    shift1End   = result.shift1.split('-')[1].trim(),
-	    shift2Start = result.shift2.split('-')[0].trim(),
-	    shift2End   = result.shift2.split('-')[1].trim();
+	    shift1Start = data.shift1.split('-')[0].trim(),
+	    shift1End   = data.shift1.split('-')[1].trim(),
+	    shift2Start = data.shift2.split('-')[0].trim(),
+	    shift2End   = data.shift2.split('-')[1].trim();
 
 	// If you don't enter a time, then skip the entry.
 	// This way, you can enter "-" or something to skip
@@ -79,4 +62,55 @@ prompt.get(schema, function (err, result) {
 
 			console.log(('Done adding hours for ' + date).green);
 		});
-});
+}
+
+
+if (process.argv[0] === 'node') {
+	// Run manually
+	var schema = {
+		properties: {
+			date: {
+				description: 'Date',
+				default: config.defaults.date
+			},
+			shift1: {
+				description: 'Before lunch',
+				default: config.defaults.shift1
+			},
+			shift2: {
+				description: 'After lunch',
+				default: config.defaults.shift2
+			}
+		}
+	};
+	prompt.start();
+	prompt.get(schema, function (err, result) {
+		if (err) throw err;
+		enterHours(result);
+	});
+} else {
+	// Run via forever
+	var job = new CronJob(config.cron, function () {
+		var date = Date.parse(config.defaults.date),
+		    date = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear(),
+		    hash = 'paycheckrecords_' + date;
+
+		Redis.get(hash, function (err, reply) {
+			if (reply) return; // Hours already entered for today
+			notifier.notify({
+				title: 'Punch Clock',
+				message: 'Are you working today?',
+				sound: 'Ping',
+				wait: true
+			});
+			notifier.on('click', function (notifierObject, options) {
+				var expire = 60 * 60 * 24 * 7 * 2; // Two weeks
+				Redis.setex(hash, expire, 'true');
+				var data = config.defaults;
+				enterHours(data);
+			});
+		});
+	});
+	job.start();
+	console.log('Cron started');
+}

@@ -14,8 +14,11 @@
   },
   "dependencies": {
     "colors": "^1.0.3",
+    "cron": "^1.0.9",
     "datejs": "^1.0.0-rc1",
     "nightmare": "^1.1.0",
-    "prompt": "^0.2.14"
+    "node-notifier": "^4.2.1",
+    "prompt": "^0.2.14",
+    "redis": "^0.12.1"
   }
 }
