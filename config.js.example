@@ -1,2 +1,12 @@
 exports.username = '';
 exports.password = '';
+exports.cron     = '00 30 9 * * 1-5'; // Runs Monday through Friday at 9:30am
+exports.defaults = {
+	date: 'today',
+	shift1: '8a-12p',
+	shift2: '1p-5p'
+};
+exports.redis = {
+	port: 6379,
+	host: 'localhost'
+};
