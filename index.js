@@ -61,6 +61,7 @@ function enterHours (data) {
 			if (err) throw err;
 
 			console.log(('Done adding hours for ' + date).green);
+			process.exit();
 		});
 }
 
