@@ -1,24 +1,23 @@
 {
   "name": "paycheckrecords",
-  "version": "2.0.0",
+  "version": "4.0.0",
   "description": "Fill in the timesheet",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "J. Miller",
+  "author": "J. Miller <j@jmillerdesign.com>",
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/thriveline/paycheckrecords.git"
+    "url": "https://github.com/jmillerdesign/paycheckrecords.git"
   },
   "dependencies": {
-    "colors": "^1.0.3",
-    "cron": "^1.0.9",
-    "datejs": "^1.0.0-rc1",
-    "nightmare": "^1.1.0",
-    "node-notifier": "^4.2.1",
-    "prompt": "^0.2.14",
-    "redis": "^0.12.1"
+    "chalk": "^1.1.1",
+    "cron": "^1.1.0",
+    "datejs": "^1.0.0-rc3",
+    "dialog": "github:jmillerdesign/dialog",
+    "nightmare": "^2.1.6",
+    "prompt": "^1.0.0"
   }
 }
