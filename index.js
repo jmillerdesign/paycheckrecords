@@ -1,7 +1,6 @@
 require('datejs');
 const config    = require('./config');
 const chalk     = require('chalk');
-const CronJob   = require('cron').CronJob;
 const dialog    = require('dialog');
 const Nightmare = require('nightmare');
 const prompt    = require('prompt');
@@ -49,8 +48,8 @@ function enterHours(params) {
 		.end();
 }
 
-if (process.argv[0] === 'node') {
-	// Run manually
+if (process.stdout.isTTY) {
+	/* Prompt user for input */
 	var schema = {
 		properties: {
 			date: {
@@ -67,20 +66,19 @@ if (process.argv[0] === 'node') {
 			}
 		}
 	};
+
 	prompt.start().get(schema, function (err, result) {
 		if (err) throw err;
 
 		enterHours(result);
 	});
 } else {
-	// Run via forever
-	new CronJob(config.cron, function () {
-		dialog.info('Did you work normal hours today?', 'Paycheck Records', ['No', 'Yes'], function (err, result) {
-			if (err) throw err;
+	/* Ask if we should record the default hours for today */
+	dialog.info('Did you work normal hours today?', 'Paycheck Records', ['No', 'Yes'], function (err, result) {
+		if (err) throw err;
 
-			if (result.trim() === 'button returned:Yes') {
-				enterHours(config.defaults);
-			}
-		});
-	}).start();
+		if (result.trim() === 'button returned:Yes') {
+			enterHours(config.defaults);
+		}
+	});
 }
